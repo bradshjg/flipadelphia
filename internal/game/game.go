@@ -253,12 +253,82 @@ func (p player) placeTile(b *board) {
 	}
 }
 
-func (p *player) endTurn() {
+func (p *player) endTurn(b *board) (gameOver bool, winner player) {
+	winner = player(-1)
+	playerOneWon := false
+	playerTwoWon := false
+
+	// if board is full, the game is necessarily over
+	gameOver = true
+	for r := range rowSize {
+		for c := range columnSize {
+			if b[r][c] == nil {
+				gameOver = false
+			}
+		}
+	}
+
+	// check for winner/s
+	for r := range rowSize {
+		for c := range columnSize {
+			tile := b[r][c]
+			if tile == nil {
+				continue
+			}
+			if b.isTileLocked(row(r), column(c)) {
+				// check all directions
+				possibleWinners := [4][3][2]int{
+					{{r, c - 1}, {r, c}, {r, c + 1}},         // horizontal
+					{{r - 1, c}, {r, c}, {r + 1, c}},         // vertical
+					{{r - 1, c - 1}, {r, c}, {r + 1, c + 1}}, // diagonal (up-left)
+					{{r - 1, c + 1}, {r, c}, {r + 1, c - 1}}, // diagonal (up-right)
+				}
+				for _, p := range possibleWinners {
+
+					r1, c1 := p[0][0], p[0][1]
+					r2, c2 := p[1][0], p[1][1]
+					r3, c3 := p[2][0], p[2][1]
+					if !(row(r1).isValid() && row(r2).isValid() && row(r3).isValid() && column(c1).isValid() && column(c2).isValid() && column(c3).isValid()) {
+						continue // all rows/columns must be valid
+					}
+					t1 := b[r1][c1]
+					t2 := b[r2][c2]
+					t3 := b[r3][c3]
+					if !(t1 != nil && t2 != nil && t3 != nil) {
+						continue // all rows/columns must be occupied by a tile
+					}
+
+					// tiles must be from the same player with the same orientation and all locked
+					if (t1.Player == t2.Player && t2.Player == t3.Player) && (t1.Orientation == t2.Orientation && t2.Orientation == t3.Orientation) && (b.isTileLocked(row(r1), column(c1)) && b.isTileLocked(row(r3), column(c3))) {
+						if t1.Player == playerOne {
+							playerOneWon = true
+						} else {
+							playerTwoWon = true
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if playerOneWon || playerTwoWon {
+		gameOver = true
+		if !(playerOneWon && playerTwoWon) {
+			if playerOneWon {
+				winner = playerOne
+			} else {
+				winner = playerTwo
+			}
+		}
+	}
+
 	if *p == playerOne {
 		*p = playerTwo
 	} else {
 		*p = playerOne
 	}
+
+	return gameOver, winner
 }
 
 func (b board) show() {
@@ -301,6 +371,15 @@ func Start() {
 			b.show()
 		}
 		p.placeTile(&b)
-		p.endTurn()
+		gameover, winner := p.endTurn(&b)
+		if gameover {
+			if winner == -1 {
+				fmt.Println("Draw game!")
+			} else {
+				fmt.Printf("%s won!\n", winner)
+			}
+			b.show()
+			os.Exit(0)
+		}
 	}
 }
