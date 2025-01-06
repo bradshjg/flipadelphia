@@ -67,6 +67,37 @@ func TestDrawBothWinners(t *testing.T) {
 	}
 }
 
+func BenchmarkDrawBothWinners(bench *testing.B) {
+	var b board
+	p := playerOne
+
+	// X A A A
+	// Y X X X
+	// X A A A
+	// Y X X X
+
+	xayb := [4]*tile{
+		{Player: playerTwo, Orientation: orientationUp},
+		{Player: playerOne, Orientation: orientationUp},
+		{Player: playerOne, Orientation: orientationUp},
+		{Player: playerOne, Orientation: orientationUp},
+	}
+	ybxa := [4]*tile{
+		{Player: playerTwo, Orientation: orientationDown},
+		{Player: playerTwo, Orientation: orientationUp},
+		{Player: playerTwo, Orientation: orientationUp},
+		{Player: playerTwo, Orientation: orientationUp},
+	}
+
+	b[0], b[2] = xayb, xayb
+	b[1], b[3] = ybxa, ybxa
+
+	bench.ResetTimer()
+	for range bench.N {
+		p.endTurn(&b)
+	}
+}
+
 func TestDrawNoWinner(t *testing.T) {
 	var b board
 	p := playerOne
@@ -98,5 +129,36 @@ func TestDrawNoWinner(t *testing.T) {
 	}
 	if winner != -1 {
 		t.Error("expected a draw")
+	}
+}
+
+func BenchmarkDrawNoWinner(bench *testing.B) {
+	var b board
+	p := playerOne
+
+	// X A Y B
+	// Y B X A
+	// X A Y B
+	// Y B X A
+
+	xayb := [4]*tile{
+		{Player: playerTwo, Orientation: orientationUp},
+		{Player: playerOne, Orientation: orientationUp},
+		{Player: playerTwo, Orientation: orientationDown},
+		{Player: playerOne, Orientation: orientationDown},
+	}
+	ybxa := [4]*tile{
+		{Player: playerTwo, Orientation: orientationDown},
+		{Player: playerOne, Orientation: orientationDown},
+		{Player: playerTwo, Orientation: orientationUp},
+		{Player: playerOne, Orientation: orientationUp},
+	}
+
+	b[0], b[2] = xayb, xayb
+	b[1], b[3] = ybxa, ybxa
+
+	bench.ResetTimer()
+	for range bench.N {
+		p.endTurn(&b)
 	}
 }

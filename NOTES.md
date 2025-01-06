@@ -42,3 +42,5 @@ I'm not yet convinced there's a _good_ shortcut here, but I'm mostly convinced t
 
 * Consider the 24 rows as first class objects, check all of them after each turn?
 * Consider the rows that are part of the subset described above, check all of them after each turn?
+
+...and this is why we don't prematurely optimize, it takes less than a microsecond via the naive approach...it's a small board!
