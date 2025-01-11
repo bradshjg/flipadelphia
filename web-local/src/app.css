@@ -1,0 +1,38 @@
+@media (min-aspect-ratio: 1/1) {
+  .board {
+    grid: repeat(4, minmax(0, 1fr)) / repeat(6, minmax(0, 1fr));
+  }
+
+  .sideboard-up {
+    grid-row-start: 2;
+    grid-column-start: 6;
+  }
+
+  .sideboard-down {
+    grid-row-start: 3;
+    grid-column-start: 6;
+  }
+}
+
+@media not all and (min-aspect-ratio: 1/1) {
+  .board {
+    grid: repeat(6, minmax(0, 1fr)) / repeat(4, minmax(0, 1fr));
+  }
+
+  .sideboard-up {
+    grid-row-start: 6;
+    grid-column-start: 2;
+  }
+
+  .sideboard-down {
+    grid-row-start: 6;
+    grid-column-start: 3;
+  }
+}
+
+.board {
+  display: grid;
+  gap: 10px;
+  width: 90%;
+  height: 90%;
+}

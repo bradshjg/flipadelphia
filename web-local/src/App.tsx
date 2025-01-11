@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import React from 'react'
+import './app.css'
 
 type Tile = {
   player: 'player1' | 'player2'
@@ -15,6 +16,8 @@ type Board = [
   [Cell, Cell, Cell, Cell],
 ]
 
+type SlideAnimation = [string, number, number]
+
 const emptyBoard: Board = [
   [Empty, Empty, Empty, Empty],
   [Empty, Empty, Empty, Empty],
@@ -23,72 +26,65 @@ const emptyBoard: Board = [
 ]
 
 function App() {
-  const [board, setBoard] = useState<Board>(emptyBoard)
-  const [placementTile, setPlacementTile] = useState<HTMLDivElement>()
-  const [placementLoc, setPlacementLoc] = useState<HTMLDivElement>()
-  const [flipTile, setFlipTile] = useState<HTMLDivElement>()
-  const [flipLoc, setFlipLoc] = useState<HTMLDivElement>()
+  const [board, setBoard] = React.useState<Board>(emptyBoard)
+  const [slideAnimation, setSlideAnimation] = React.useState<SlideAnimation>()
+  const tileSelected = React.useRef<HTMLDivElement>()
 
+  const onBoardClick = (e: HTMLDivElement) => {
+    if (!tileSelected.current) { return }
+    const from = tileSelected.current
+    const to = e
+    const fromRect = from.getBoundingClientRect()
+    const toRect = to.getBoundingClientRect()
+    console.log(`(${fromRect.top}, ${fromRect.left}) => (${toRect.top}, ${toRect.left})`)
+    setSlideAnimation([from.className, toRect.left - fromRect.left, toRect.top - fromRect.top])
+  }
+
+  const onSideboardClick = (e: HTMLDivElement) => {
+    tileSelected.current = e
+  }
   return (
-    <>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh'}}>
-        <div className='board'>
-          {
-            board.map((row, i) => {
-              return row.map((_, j) => {
-                return <div
-                  key={`${i}${j}`}
-                  className='tile'
-                  style={{gridRowStart: i+1, gridColumnStart: j+1, border: 'solid'}}
-                />
-              }) 
-            })
-          }
-          <div className='sideboard-up' style={{backgroundColor: 'teal', border: 'solid'}} />
-          <div className='sideboard-down' style={{backgroundColor: 'aqua', border: 'solid'}} />
-        </div>
+    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh'}}>
+      <div className='board'>
+        {
+          board.map((row, i) => {
+            return row.map((_, j) => {
+              return <div
+                key={`${i}${j}`}
+                className='tile'
+                onClick={(e) => onBoardClick(e.currentTarget)}
+                style={{gridRowStart: i+1, gridColumnStart: j+1, backgroundColor: 'grey'}}
+              />
+            }) 
+          })
+        }
+        <div className='sideboard-up' onClick={(e) => onSideboardClick(e.currentTarget)} style={{backgroundColor: 'teal'}} />
+        <div className='sideboard-down' onClick={(e) => onSideboardClick(e.currentTarget)} style={{backgroundColor: 'aqua'}} />
       </div>
-      <style>{`
-        @media (min-aspect-ratio: 1/1) {
-          .board {
-            grid: repeat(4, minmax(0, 1fr)) / repeat(6, minmax(0, 1fr));
+      <style>{
+        slideAnimation && (`
+          .${slideAnimation[0]} {
+            animation-duration: 1s;
+            animation-name: move-tile;
+            animation-fill-mode: forwards;
           }
 
-          .sideboard-up {
-            grid-row-start: 2;
-            grid-column-start: 6;
-          }
+          @keyframes move-tile {
+            from {
+              translate: 0 0;
+            }
 
-          .sideboard-down {
-            grid-row-start: 3;
-            grid-column-start: 6;
-          }
-        }
+            50% {
+              scale: 120%;
+            }
 
-        @media not all and (min-aspect-ratio: 1/1) {
-          .board {
-            grid: repeat(6, minmax(0, 1fr)) / repeat(4, minmax(0, 1fr));
+            to {
+              translate: ${slideAnimation[1]}px ${slideAnimation[2]}px;
+            }
           }
-
-          .sideboard-up {
-            grid-row-start: 6;
-            grid-column-start: 2;
-          }
-
-          .sideboard-down {
-            grid-row-start: 6;
-            grid-column-start: 3;
-          }
-        }
-
-        .board {
-          display: grid;
-          gap: 10px;
-          width: 90%;
-          height: 90%;
-        }
-      `}</style>
-    </>
+        `)
+      }</style>
+    </div>
   )
 }
 
