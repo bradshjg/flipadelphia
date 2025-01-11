@@ -37,9 +37,9 @@ function App() {
             })
           }
         </div>
-        <div className='corral'>
-          <div>up</div>
-          <div>down</div>
+        <div className='sideboard'>
+          <div className='sideboard-up'>up</div>
+          <div className='sideboard-down'>down</div>
         </div>
       </div>
       <style>{`
@@ -61,15 +61,19 @@ function App() {
             height: 70vh;
           }
 
-          .up {
-            grid-row-start: 2;
-          }
-
-          .corral {
+          .sideboard {
             height: 70vh;
             display: grid;
             grid: repeat(4, 1fr) / 1fr;
             aspect-ratio: 1/4;
+          }
+
+          .sideboard-up {
+            grid-row-start: 2;
+          }
+
+          .sideboard-down {
+            grid-row-start: 3;
           }
         }
 
@@ -82,11 +86,19 @@ function App() {
             width: 70vw;
           }
 
-          .corral {
+          .sideboard {
             display: grid;
             grid: 1fr / repeat(4, 1fr);
             width: 70vw;
             aspect-ratio: 4;
+          }
+
+          .sideboard-up {
+            grid-column-start: 2;
+          }
+
+          .sideboard-down {
+            grid-column-start: 3;
           }
         }
 
@@ -105,7 +117,7 @@ function App() {
           aspect-ratio: 1;
         }
 
-        .corral {
+        .sideboard {
           gap: 10px;
         }
       `}</style>
