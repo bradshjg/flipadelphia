@@ -77,7 +77,7 @@ function App() {
           }
         }
 
-        @media (max-aspect-ratio: 1/1) {
+        @media not all and (min-aspect-ratio: 1/1) {
           .container {
             flex-direction: column;
           }
