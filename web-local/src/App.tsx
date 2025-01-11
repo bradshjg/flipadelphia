@@ -39,23 +39,19 @@ function App() {
                 return <div
                   key={`${i}${j}`}
                   className='tile'
-                  style={{gridRowStart: i+1, gridColumnStart: j+1}}
-                >
-                  {i},{j}
-                </div>
+                  style={{gridRowStart: i+1, gridColumnStart: j+1, border: 'solid'}}
+                />
               }) 
             })
           }
-          <div className='sideboard-up' style={{backgroundColor: 'teal'}}>UP</div>
-          <div className='sideboard-down' style={{backgroundColor: 'aqua'}}>DOWN</div>
+          <div className='sideboard-up' style={{backgroundColor: 'teal', border: 'solid'}} />
+          <div className='sideboard-down' style={{backgroundColor: 'aqua', border: 'solid'}} />
         </div>
       </div>
       <style>{`
         @media (min-aspect-ratio: 1/1) {
           .board {
             grid: repeat(4, minmax(0, 1fr)) / repeat(6, minmax(0, 1fr));
-            aspect-ratio: 6/4;
-            height: 80%;
           }
 
           .sideboard-up {
@@ -72,8 +68,6 @@ function App() {
         @media not all and (min-aspect-ratio: 1/1) {
           .board {
             grid: repeat(6, minmax(0, 1fr)) / repeat(4, minmax(0, 1fr));
-            aspect-ratio: 4/6;
-            width: 80%;
           }
 
           .sideboard-up {
@@ -90,8 +84,8 @@ function App() {
         .board {
           display: grid;
           gap: 10px;
-          max-width: 100%;
-          max-height: 100%;
+          width: 90%;
+          height: 90%;
         }
       `}</style>
     </>
