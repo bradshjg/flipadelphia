@@ -90,6 +90,8 @@ function App() {
         .board {
           display: grid;
           gap: 10px;
+          max-width: 100%;
+          max-height: 100%;
         }
       `}</style>
     </>
