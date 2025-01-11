@@ -24,100 +24,71 @@ const emptyBoard: Board = [
 
 function App() {
   const [board, setBoard] = useState<Board>(emptyBoard)
+  const [placementTile, setPlacementTile] = useState<HTMLDivElement>()
+  const [placementLoc, setPlacementLoc] = useState<HTMLDivElement>()
+  const [flipTile, setFlipTile] = useState<HTMLDivElement>()
+  const [flipLoc, setFlipLoc] = useState<HTMLDivElement>()
 
   return (
     <>
-      <div className='container'>
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh'}}>
         <div className='board'>
           {
             board.map((row, i) => {
               return row.map((_, j) => {
-                return <div key={`${i}${j}`} className='tile'>{i},{j}</div>
+                return <div
+                  key={`${i}${j}`}
+                  className='tile'
+                  style={{gridRowStart: i+1, gridColumnStart: j+1}}
+                >
+                  {i},{j}
+                </div>
               }) 
             })
           }
-        </div>
-        <div className='sideboard'>
-          <div className='sideboard-up'>up</div>
-          <div className='sideboard-down'>down</div>
+          <div className='sideboard-up' style={{backgroundColor: 'teal'}}>UP</div>
+          <div className='sideboard-down' style={{backgroundColor: 'aqua'}}>DOWN</div>
         </div>
       </div>
       <style>{`
-        * {
-          margin: 0;
-        }
-
-        div {
-          border: solid;
-          text-align: center;
-        }
-
         @media (min-aspect-ratio: 1/1) {
-          .container {
-            flex-direction: row;
-          }
-
           .board {
-            height: 70vh;
-          }
-
-          .sideboard {
-            height: 70vh;
-            display: grid;
-            grid: repeat(4, 1fr) / 1fr;
-            aspect-ratio: 1/4;
+            grid: repeat(4, minmax(0, 1fr)) / repeat(6, minmax(0, 1fr));
+            aspect-ratio: 6/4;
+            height: 80%;
           }
 
           .sideboard-up {
             grid-row-start: 2;
+            grid-column-start: 6;
           }
 
           .sideboard-down {
             grid-row-start: 3;
+            grid-column-start: 6;
           }
         }
 
         @media not all and (min-aspect-ratio: 1/1) {
-          .container {
-            flex-direction: column;
-          }
-
           .board {
-            width: 70vw;
-          }
-
-          .sideboard {
-            display: grid;
-            grid: 1fr / repeat(4, 1fr);
-            width: 70vw;
-            aspect-ratio: 4;
+            grid: repeat(6, minmax(0, 1fr)) / repeat(4, minmax(0, 1fr));
+            aspect-ratio: 4/6;
+            width: 80%;
           }
 
           .sideboard-up {
+            grid-row-start: 6;
             grid-column-start: 2;
           }
 
           .sideboard-down {
+            grid-row-start: 6;
             grid-column-start: 3;
           }
         }
 
-        .container {
-          display: flex;
-          align-items: center;
-          justify-content: space-evenly;
-          width: 100vw;
-          height: 100vh;
-        }
-
         .board {
           display: grid;
-          grid: repeat(4, 1fr) / repeat(4, 1fr);
-          gap: 10px;
-          aspect-ratio: 1;
-        }
-
-        .sideboard {
           gap: 10px;
         }
       `}</style>
