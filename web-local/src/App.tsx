@@ -11,8 +11,6 @@ type IBoard = [
 
 type SlideAnimation = [string, number, number]
 
-type MoveState = 'place' | 'flip' | 'confirm'
-
 const emptyBoard: IBoard = [
   [undefined, undefined, undefined, undefined],
   [undefined, undefined, undefined, undefined],
@@ -34,10 +32,12 @@ function App() {
     const to = e
     const fromRect = from.getBoundingClientRect()
     const toRect = to.getBoundingClientRect()
-    console.log(`(${fromRect.top}, ${fromRect.left}) => (${toRect.top}, ${toRect.left})`)
     setSlideAnimation([from.className, toRect.left - fromRect.left, toRect.top - fromRect.top])
     setTimeout(() => {
-      board[row - 1][column - 1] = {player: 'player1', orientation: 'up'}
+      board[row - 1][column - 1] = {
+        player: 'player1',
+        orientation: from.className == 'sideboard-up' ? 'up' : 'down'
+      }
       setBoard(board)
       setSlideAnimation(undefined)
     }, animationDuration * 1000)

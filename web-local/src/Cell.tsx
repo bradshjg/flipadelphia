@@ -13,17 +13,19 @@ type Props = {
 }
 
 export const Cell = ({tile, row, column, onClick}: Props) => {
+  const bgColor: string = tile ? (
+    tile.orientation == 'up' ? 'teal' : 'aqua'
+  ) : (
+    'grey'
+  )
   return (
     <div
       onClick={(e) => onClick(e.currentTarget, row, column)}
-      style={{gridRowStart: row, gridColumnStart: column}}
-    >
-      {
-        tile ? 
-          `${tile.player} - ${tile.orientation}`
-        : 
-          'empty'
-      }
-    </div>
+      style={{
+        gridRowStart: row,
+        gridColumnStart: column,
+        backgroundColor: bgColor,
+      }}
+    />
   )
 }
