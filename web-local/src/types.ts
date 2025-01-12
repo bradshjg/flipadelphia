@@ -28,7 +28,6 @@ interface BasicAnimation {
 
 export interface SlideAnimation extends BasicAnimation {
   kind: 'slide'
-  className: string
   endPosition: [number, number]
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import {Animation as Animation, Board as IBoard, Cell, FlipTileSelected, GameState, Player, Position, TileSelected} from './types'
+import {Animation as Animation, Board as IBoard, Cell, FlipTileSelected, GameState, Player, Position, Tile, TileSelected} from './types'
 import Board from './Board'
 import Sideboard from './Sideboard'
 import TileAnimation from './TileAnimation'
@@ -23,7 +23,7 @@ function App() {
   const gameboardTileSelected = React.useRef<FlipTileSelected>()
 
   const swapPlayer = () => {
-    setGameState('flip')
+    // setGameState('flip')
     if (player == 'player1') {
       setPlayer('player2')
     } else {
@@ -31,25 +31,32 @@ function App() {
     }
   }
 
-  const placeTile = (sideBoardDiv: HTMLDivElement, boardDiv: HTMLDivElement, position: [number, number]) => {
-    const from = sideBoardDiv
-    const to = boardDiv
-    const fromRect = from.getBoundingClientRect()
-    const toRect = to.getBoundingClientRect()
-    sideboardTileSelected.current = undefined
+  const placeTile = (sideBoardDiv: HTMLDivElement, sideBoardTile: Tile, boardDiv: HTMLDivElement, boardTile: Cell, boardPosition: [number, number]) => {
+    if (boardTile) { return } // requires empty cell
+    const sideboardRect = sideBoardDiv.getBoundingClientRect()
+    const boardRect = boardDiv.getBoundingClientRect()
+
+    // animate
+    sideBoardDiv.classList.add('slide-animation')
     setAnimation({
       kind: 'slide',
       duration: animationDuration,
-      className: from.className,
-      endPosition: [toRect.left - fromRect.left, toRect.top - fromRect.top],
+      endPosition: [boardRect.left - sideboardRect.left, boardRect.top - sideboardRect.top],
     })
+
     setTimeout(() => {
-      board[position[0] - 1][position[1] - 1] = {
+      // lock board position TODO allow rollback?
+      board[boardPosition[0] - 1][boardPosition[1] - 1] = { // position in 1-indexed, board array is 0-indexed
         player: player,
-        orientation: from.className == 'sideboard-up' ? 'up' : 'down'
+        orientation: sideBoardTile.orientation,
       }
       setBoard(board)
+
+      // clean up state
+      sideBoardDiv.classList.remove('slide-animation')
       setAnimation(undefined)
+      sideboardTileSelected.current = undefined
+
       swapPlayer()
     }, animationDuration * 1000)
   }
@@ -58,9 +65,7 @@ function App() {
     if (animation) { return }
     if (typeof position === 'string') { return }
     if (sideboardTileSelected.current && gameState == 'place') {
-      if (tile) { return } // requires empty cell
-      const sideBoardDiv = sideboardTileSelected.current.el
-      placeTile(sideBoardDiv, el, position)
+      placeTile(sideboardTileSelected.current.el, sideboardTileSelected.current.tile, el, tile, position)
     }
     if (gameState == 'flip') {
       if (!gameboardTileSelected.current) { // choose an opponent's tile to flip
