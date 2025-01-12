@@ -24,6 +24,14 @@ function App() {
   const [gameState, setGameState] = React.useState<GameState>('place')
   const sideboardTileSelected = React.useRef<HTMLDivElement>()
 
+  const swapPlayer = () => {
+    if (player == 'player1') {
+      setPlayer('player2')
+    } else {
+      setPlayer('player1')
+    }
+  }
+
   const onBoardClick = (e: HTMLDivElement, position: Position) => {
     if (!sideboardTileSelected.current) { return }
     if (slideAnimation) { return }
@@ -41,6 +49,7 @@ function App() {
       }
       setBoard(board)
       setSlideAnimation(undefined)
+      swapPlayer()
     }, animationDuration * 1000)
   }
 
