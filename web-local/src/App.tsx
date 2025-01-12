@@ -1,13 +1,13 @@
 import React from 'react'
-import {Board, GameState, Player, Position} from './types'
-import Cell from './Cell'
+import {Board as IBoard, GameState, Player, Position} from './types'
+import Board from './Board'
 import Sideboard from './Sideboard'
 import './app.css'
 
 type SlideAnimation = [string, number, number]
 type FlipAnimation = [string, number, number]
 
-const emptyBoard: Board = [
+const emptyBoard: IBoard = [
   [undefined, undefined, undefined, undefined],
   [undefined, undefined, undefined, undefined],
   [undefined, undefined, undefined, undefined],
@@ -17,7 +17,7 @@ const emptyBoard: Board = [
 const animationDuration = 0.5 // seconds
 
 function App() {
-  const [board, setBoard] = React.useState<Board>(emptyBoard)
+  const [board, setBoard] = React.useState<IBoard>(emptyBoard)
   const [player, setPlayer] = React.useState<Player>('player2')
   const [slideAnimation, setSlideAnimation] = React.useState<SlideAnimation>()
   const [flipAnimation, setFlipAnimation] = React.useState<FlipAnimation>()
@@ -60,20 +60,7 @@ function App() {
   return (
     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh'}}>
       <div className='board'>
-        {
-          board.map((row, i) => {
-            return row.map((tile, j) => {
-              return (
-                <Cell
-                  key={`cell-${i}-${j}`}
-                  tile={tile}
-                  position={[i+1, j+1]}
-                  onClick={onBoardClick}
-                />
-              )
-            }) 
-          })
-        }
+        <Board board={board} onClick={onBoardClick} />
         <Sideboard player={player} onClick={onSideboardClick}/>
       </div>
       <style>{
