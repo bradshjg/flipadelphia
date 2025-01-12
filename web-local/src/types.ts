@@ -43,3 +43,7 @@ export interface TileSelected {
   el: HTMLDivElement,
   tile: Tile,
 }
+
+export interface FlipTileSelected extends TileSelected {
+  position: Position,
+}

@@ -1,5 +1,5 @@
 import React from 'react'
-import {Animation as Animation, Board as IBoard, Cell, GameState, Player, Position, TileSelected} from './types'
+import {Animation as Animation, Board as IBoard, Cell, FlipTileSelected, GameState, Player, Position, TileSelected} from './types'
 import Board from './Board'
 import Sideboard from './Sideboard'
 import TileAnimation from './TileAnimation'
@@ -20,7 +20,7 @@ function App() {
   const [gameState, setGameState] = React.useState<GameState>('place')
   const [animation, setAnimation] = React.useState<Animation>()
   const sideboardTileSelected = React.useRef<TileSelected>()
-  const gameboardTileSelected = React.useRef<TileSelected>()
+  const gameboardTileSelected = React.useRef<FlipTileSelected>()
 
   const swapPlayer = () => {
     setGameState('flip')
@@ -56,20 +56,40 @@ function App() {
 
   const onBoardClick = (el: HTMLDivElement, tile: Cell, position: Position) => {
     if (animation) { return }
+    if (typeof position === 'string') { return }
     if (sideboardTileSelected.current && gameState == 'place') {
       const sideBoardDiv = sideboardTileSelected.current.el
-      if (typeof position === 'string') { return }
       placeTile(sideBoardDiv, el, position)
     }
     if (gameState == 'flip') {
-      if (!gameboardTileSelected.current) {
-        if (!tile) { return }
+      if (!gameboardTileSelected.current) { // choose an opponent's tile to flip
+        if (!tile || tile.player == player) { return }
         gameboardTileSelected.current = {
           el: el,
           tile: tile,
+          position: position,
         }
       } else {
-        console.log('do the flip!')
+        if (tile && tile.player != player) { // choose a new opponent's tile to flip
+          gameboardTileSelected.current = {
+            el: el,
+            tile: tile,
+            position: position,
+          }
+        } else { // flip to adjacent location if possible
+          const selectedTile = gameboardTileSelected.current
+          if (typeof selectedTile.position === 'string') { return }
+          // check empty
+          if (tile) { return }
+          // check adjacency
+          const adjacency = [
+            Math.abs(selectedTile.position[0] - position[0]),
+            Math.abs(selectedTile.position[1] - position[1])
+          ].sort()
+          if (!(adjacency[0] === 0 && adjacency[1] === 1)) { return }
+          // flip!
+          console.log(`do the flip! (${selectedTile.position} -> ${position})`)
+        }
       }
     }
   }
