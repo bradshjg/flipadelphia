@@ -69,6 +69,7 @@ const Tile = ({tile, position, onClick}: TileProps) => {
       }}
     >
       <div className="tile">
+        <div style={{position: "fixed", width: "100%", height: "100%", backgroundColor: "grey"}} />
         <div className="tile-container" onClick={(e) => onClick(e.currentTarget, tile, position)}>
           <div className="tile-front" style={tileCSS[0]} />
           <div className="tile-back" style={tileCSS[1]} />
