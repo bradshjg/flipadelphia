@@ -3,7 +3,7 @@ import {CellProps} from './types'
 const EmptyCell = ({position, onClick}: CellProps) => {
   return (
     <div
-      onClick={(e) => onClick(e.currentTarget, position)}
+      onClick={(e) => onClick(e.currentTarget, undefined, position)}
       style={{
         gridRowStart: position[0],
         gridColumnStart: position[1],

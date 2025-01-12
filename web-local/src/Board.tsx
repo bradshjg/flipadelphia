@@ -1,9 +1,9 @@
-import {Board as IBoard, Position} from './types'
+import {Cell as ICell, Board as IBoard, Position} from './types'
 import Cell from './Cell'
 
 type Props = {
   board: IBoard
-  onClick: (e: HTMLDivElement, position: Position) => void
+  onClick: (e: HTMLDivElement, tile: ICell, position: Position) => void
 }
 
 const Board = ({board, onClick}: Props) => {

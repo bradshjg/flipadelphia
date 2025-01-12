@@ -1,9 +1,9 @@
-import {Player} from './types'
+import {Cell, Player} from './types'
 import Tile from './Tile'
 
 type Props = {
   player: Player
-  onClick: (e: HTMLDivElement) => void
+  onClick: (e: HTMLDivElement, tile: Cell) => void
 }
 
 const Sideboard = ({player, onClick}: Props) => {

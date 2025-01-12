@@ -52,7 +52,7 @@ const Tile = ({tile, position, onClick}: TileProps) => {
   return (
     <div
       className={className}
-      onClick={(e) => onClick(e.currentTarget, position)}
+      onClick={(e) => onClick(e.currentTarget, tile, position)}
       style={{
         ...gridCSS,
         ...tileStyle(tile)

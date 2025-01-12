@@ -18,5 +18,28 @@ export type Position = string | [number, number] // support CSS class or X,Y gri
 export interface CellProps {
   tile?: Tile
   position: Position
-  onClick: (e: HTMLDivElement, position: Position) => void
+  onClick: (e: HTMLDivElement, tile: Cell, position: Position) => void
+}
+
+interface BasicAnimation {
+  kind: string
+  duration: number // seconds
+}
+
+export interface SlideAnimation extends BasicAnimation {
+  kind: 'slide'
+  className: string
+  endPosition: [number, number]
+}
+
+export interface FlipAnimation extends BasicAnimation {
+  kind: 'flip'
+  endPosition: [number, number]
+}
+
+export type Animation = SlideAnimation | FlipAnimation
+
+export interface TileSelected {
+  el: HTMLDivElement,
+  tile: Tile,
 }
