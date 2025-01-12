@@ -58,6 +58,7 @@ function App() {
     if (animation) { return }
     if (typeof position === 'string') { return }
     if (sideboardTileSelected.current && gameState == 'place') {
+      if (tile) { return } // requires empty cell
       const sideBoardDiv = sideboardTileSelected.current.el
       placeTile(sideBoardDiv, el, position)
     }
