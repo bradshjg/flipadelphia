@@ -1,4 +1,10 @@
-# Rules
+# Flipadelpha
+
+## Play
+
+https://bradshjg.github.io/flipadelphia/
+
+## Rules
 
 * Each player has 8 double-sided tiles.
 * The game board is a 4x4 grid.
