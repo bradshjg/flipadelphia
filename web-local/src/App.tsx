@@ -1,41 +1,42 @@
 import React from 'react'
-import {Cell, ICell} from './Cell'
+import {Board, GameState, Player, Position} from './types'
+import Cell from './Cell'
+import Sideboard from './Sideboard'
 import './app.css'
 
-type IBoard = [
-  [ICell, ICell, ICell, ICell],
-  [ICell, ICell, ICell, ICell],
-  [ICell, ICell, ICell, ICell],
-  [ICell, ICell, ICell, ICell],
-]
-
 type SlideAnimation = [string, number, number]
+type FlipAnimation = [string, number, number]
 
-const emptyBoard: IBoard = [
+const emptyBoard: Board = [
   [undefined, undefined, undefined, undefined],
   [undefined, undefined, undefined, undefined],
   [undefined, undefined, undefined, undefined],
   [undefined, undefined, undefined, undefined],
 ]
 
-const animationDuration = 1 // seconds
+const animationDuration = 0.5 // seconds
 
 function App() {
-  const [board, setBoard] = React.useState<IBoard>(emptyBoard)
+  const [board, setBoard] = React.useState<Board>(emptyBoard)
+  const [player, setPlayer] = React.useState<Player>('player2')
   const [slideAnimation, setSlideAnimation] = React.useState<SlideAnimation>()
-  const tileSelected = React.useRef<HTMLDivElement>()
+  const [flipAnimation, setFlipAnimation] = React.useState<FlipAnimation>()
+  const [gameState, setGameState] = React.useState<GameState>('place')
+  const sideboardTileSelected = React.useRef<HTMLDivElement>()
 
-  const onBoardClick = (e: HTMLDivElement, row: number, column: number) => {
-    if (!tileSelected.current) { return }
+  const onBoardClick = (e: HTMLDivElement, position: Position) => {
+    if (!sideboardTileSelected.current) { return }
     if (slideAnimation) { return }
-    const from = tileSelected.current
+    if (typeof position == 'string') { return }
+    const from = sideboardTileSelected.current
     const to = e
     const fromRect = from.getBoundingClientRect()
     const toRect = to.getBoundingClientRect()
+    sideboardTileSelected.current = undefined
     setSlideAnimation([from.className, toRect.left - fromRect.left, toRect.top - fromRect.top])
     setTimeout(() => {
-      board[row - 1][column - 1] = {
-        player: 'player1',
+      board[position[0] - 1][position[1] - 1] = {
+        player: player,
         orientation: from.className == 'sideboard-up' ? 'up' : 'down'
       }
       setBoard(board)
@@ -44,7 +45,7 @@ function App() {
   }
 
   const onSideboardClick = (e: HTMLDivElement) => {
-    tileSelected.current = e
+    sideboardTileSelected.current = e
   }
 
   return (
@@ -57,16 +58,14 @@ function App() {
                 <Cell
                   key={`cell-${i}-${j}`}
                   tile={tile}
-                  row={i+1}
-                  column={j+1}
+                  position={[i+1, j+1]}
                   onClick={onBoardClick}
                 />
               )
             }) 
           })
         }
-        <div className='sideboard-up' onClick={(e) => onSideboardClick(e.currentTarget)} style={{backgroundColor: 'teal'}} />
-        <div className='sideboard-down' onClick={(e) => onSideboardClick(e.currentTarget)} style={{backgroundColor: 'aqua'}} />
+        <Sideboard player={player} onClick={onSideboardClick}/>
       </div>
       <style>{
         slideAnimation && (`
