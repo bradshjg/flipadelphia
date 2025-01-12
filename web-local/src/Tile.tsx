@@ -1,6 +1,7 @@
+import React from "react"
 import { CellProps, Tile as ITile } from "./types"
 
-const tileStyle = (tile: ITile): React.CSSProperties => {
+const tileStyles = (tile: ITile): React.CSSProperties[] => {
   const p1Major = 'teal'
   const p1Minor = 'aqua'
   const p2Major = 'gold'
@@ -26,12 +27,22 @@ const tileStyle = (tile: ITile): React.CSSProperties => {
     }
   }
 
-  return {
-    background: background,
-    border: 'solid',
-    borderWidth: 'thick',
-    borderColor: border,
-  }
+  return [ // TODO hacky front/back
+    {
+      background: background,
+      outlineStyle: 'solid',
+      outlineOffset: '-10px',
+      outlineWidth: 'thick',
+      outlineColor: border,
+    },
+    {
+      background: border,
+      outlineStyle: 'solid',
+      outlineOffset: '-10px',
+      outlineWidth: 'thick',
+      outlineColor: background,
+    },
+  ]
 
 }
 
@@ -49,15 +60,22 @@ const Tile = ({tile, position, onClick}: TileProps) => {
   :
     {}
   )
+  const tileCSS: React.CSSProperties[] = tileStyles(tile)
   return (
     <div
       className={className}
       onClick={(e) => onClick(e.currentTarget, tile, position)}
       style={{
         ...gridCSS,
-        ...tileStyle(tile)
       }}
-    />
+    >
+      <div className="tile">
+        <div className="tile-container">
+          <div className="tile-front" style={tileCSS[0]} />
+          <div className="tile-back" style={tileCSS[1]} />
+        </div>
+      </div>
+    </div>
   )
 }
 
