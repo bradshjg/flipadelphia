@@ -4,6 +4,14 @@ type Props = {
   animation?: SlideAnimation | FlipAnimation
 }
 
+const flip = (duration: number, rotation: string, translation: string): string => {return `
+  .flip-animation {
+    transition: transform ${duration}s;
+    transform-style: preserve-3d;
+    transform: ${rotation} ${translation}; /* e.g. rotateX(180deg) translateY(100px) */
+  }
+`}
+
 const slide = (duration: number, endPosition: [number, number]): string => {return `
   .slide-animation {
     animation-duration: ${duration}s;
@@ -32,6 +40,9 @@ const TileAnimation = ({animation}: Props) => {
   switch (animation.kind) {
     case 'slide':
       animationStyle = slide(animation.duration, animation.endPosition)
+      break
+    case 'flip':
+      animationStyle = flip(animation.duration, animation.rotation, animation.translation)
       break
     default:
       animationStyle = ''

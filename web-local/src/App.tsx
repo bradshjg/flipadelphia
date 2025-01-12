@@ -23,7 +23,7 @@ function App() {
   const gameboardTileSelected = React.useRef<FlipTileSelected>()
 
   const swapPlayer = () => {
-    // setGameState('flip')
+    setGameState('flip')
     if (player == 'player1') {
       setPlayer('player2')
     } else {
@@ -31,12 +31,61 @@ function App() {
     }
   }
 
-  const placeTile = (sideBoardDiv: HTMLDivElement, sideBoardTile: Tile, boardDiv: HTMLDivElement, boardTile: Cell, boardPosition: [number, number]) => {
-    if (boardTile) { return } // requires empty cell
-    const sideboardRect = sideBoardDiv.getBoundingClientRect()
-    const boardRect = boardDiv.getBoundingClientRect()
+  const flipTile = (tileDiv: HTMLDivElement, tile: Tile, boardDiv: HTMLDivElement, tilePosition: [number, number], boardPosition: [number, number]) => {
 
     // animate
+    const tileRect = tileDiv.getBoundingClientRect()
+    const boardRect = boardDiv.getBoundingClientRect()
+    let rotation: string
+    let translation: string
+    if (tilePosition[0] == boardPosition[0]) { // horizontal movement
+      translation = `translateX(${tileRect.left - boardRect.left}px)`
+      if (boardPosition[1] > tilePosition[1]) { // flipping right
+        rotation = 'rotateY(180deg)'
+      } else { // flipping left
+        rotation = 'rotateY(-180deg)'
+      }
+    } else {
+      translation = `translateY(${tileRect.top - boardRect.top}px)`
+      if (boardPosition[0] > tilePosition[0]) { // flipping down
+        rotation = 'rotateX(-180deg)'
+      } else { // flipping up
+        rotation = 'rotateX(180deg)'
+      }
+    }
+    tileDiv.classList.add('flip-animation')
+    setAnimation({
+      kind: 'flip',
+      duration: animationDuration,
+      rotation: rotation,
+      translation: translation,
+    })
+
+    setTimeout(() => {
+      // lock board position TODO allow rollback?
+      // position in 1-indexed, board array is 0-indexed
+      board[tilePosition[0] - 1][tilePosition[1] - 1] = undefined
+      board[boardPosition[0] - 1][boardPosition[1] - 1] = {
+        player: tile.player,
+        orientation: tile.orientation == 'down' ? 'up' : 'down',
+      }
+      setBoard(board)
+
+      // clean up state
+      tileDiv.classList.remove('flip-animation')
+      setAnimation(undefined)
+      gameboardTileSelected.current = undefined
+
+      setGameState('place')
+    }, animationDuration * 1000)
+  }
+
+  const placeTile = (sideBoardDiv: HTMLDivElement, sideBoardTile: Tile, boardDiv: HTMLDivElement, boardTile: Cell, boardPosition: [number, number]) => {
+    if (boardTile) { return } // requires empty cell
+
+    // animate
+    const sideboardRect = sideBoardDiv.getBoundingClientRect()
+    const boardRect = boardDiv.getBoundingClientRect()
     sideBoardDiv.classList.add('slide-animation')
     setAnimation({
       kind: 'slide',
@@ -94,8 +143,8 @@ function App() {
           ].sort()
           if (!(adjacency[0] === 0 && adjacency[1] === 1)) { return }
           // flip!
-          console.log(`do the flip! (${selectedTile.position} -> ${position})`)
-        }
+          flipTile(selectedTile.el, selectedTile.tile, el, selectedTile.position, position)
+         }
       }
     }
   }

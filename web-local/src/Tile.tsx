@@ -64,13 +64,12 @@ const Tile = ({tile, position, onClick}: TileProps) => {
   return (
     <div
       className={className}
-      onClick={(e) => onClick(e.currentTarget, tile, position)}
       style={{
         ...gridCSS,
       }}
     >
       <div className="tile">
-        <div className="tile-container">
+        <div className="tile-container" onClick={(e) => onClick(e.currentTarget, tile, position)}>
           <div className="tile-front" style={tileCSS[0]} />
           <div className="tile-back" style={tileCSS[1]} />
         </div>

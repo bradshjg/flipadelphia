@@ -33,7 +33,8 @@ export interface SlideAnimation extends BasicAnimation {
 
 export interface FlipAnimation extends BasicAnimation {
   kind: 'flip'
-  endPosition: [number, number]
+  rotation: string
+  translation: string
 }
 
 export type Animation = SlideAnimation | FlipAnimation
