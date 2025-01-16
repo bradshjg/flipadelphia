@@ -1,8 +1,10 @@
 import React from 'react'
 import {Animation as Animation, Board as IBoard, Cell, FlipTileSelected, GameState, Player, Position, Tile, TileSelected} from './types'
 import Board from './Board'
+import Flash from './Flash'
 import Sideboard from './Sideboard'
 import TileAnimation from './TileAnimation'
+import {gameOver, canFlip} from './rules'
 import './app.css'
 
 const emptyBoard: IBoard = [
@@ -16,14 +18,23 @@ const animationDuration = 0.5 // seconds
 
 function App() {
   const [board, setBoard] = React.useState<IBoard>(emptyBoard)
-  const [player, setPlayer] = React.useState<Player>('player2')
+  const [player, setPlayer] = React.useState<Player>('player1')
   const [gameState, setGameState] = React.useState<GameState>('place')
   const [animation, setAnimation] = React.useState<Animation>()
+  const [message, setMessage] = React.useState<string>()
   const sideboardTileSelected = React.useRef<TileSelected>()
   const gameboardTileSelected = React.useRef<FlipTileSelected>()
 
-  const swapPlayer = () => {
-    setGameState('flip')
+  const endTurn = (board: IBoard, player: Player) => {
+    const [isGameOver, winner] = gameOver(board)
+
+    if (isGameOver) {
+      setMessage(winner ? `${winner == 'player1' ? 'seafoam' : 'purple'} wins!` : 'Draw!')
+      return
+    }
+
+    setGameState(canFlip(board, player) ? 'flip' : 'place')
+
     if (player == 'player1') {
       setPlayer('player2')
     } else {
@@ -106,7 +117,7 @@ function App() {
       setAnimation(undefined)
       sideboardTileSelected.current = undefined
 
-      swapPlayer()
+      endTurn(board, player)
     }, animationDuration * 1000)
   }
 
@@ -161,6 +172,7 @@ function App() {
         <Sideboard player={player} onClick={onSideboardClick}/>
       </div>
       <TileAnimation animation={animation} />
+      <Flash message={message} />
     </div>
   )
 }
